@@ -15,12 +15,15 @@ class Task:
     completed: bool = False
 
     def is_high_priority(self) -> bool:
+        """Return True if this task's priority is 'high'."""
         return self.priority == "high"
 
     def mark_done(self) -> None:
+        """Mark this task as completed."""
         self.completed = True
 
     def __repr__(self) -> str:
+        """Return a readable string representation of the task."""
         status = "done" if self.completed else "pending"
         return (
             f"Task('{self.title}', {self.duration_minutes}min, "
@@ -35,9 +38,11 @@ class Pet:
     tasks: List[Task] = field(default_factory=list)
 
     def add_task(self, task: Task) -> None:
+        """Append a task to this pet's task list."""
         self.tasks.append(task)
 
     def get_tasks(self) -> List[Task]:
+        """Return all tasks (including completed) for this pet."""
         return self.tasks
 
     def get_pending_tasks(self) -> List[Task]:
@@ -45,6 +50,7 @@ class Pet:
         return [t for t in self.tasks if not t.completed]
 
     def __repr__(self) -> str:
+        """Return a readable string representation of the pet."""
         return f"Pet(name='{self.name}', species='{self.species}', tasks={len(self.tasks)})"
 
 
@@ -56,12 +62,15 @@ class Owner:
     pets: List[Pet] = field(default_factory=list)
 
     def add_pet(self, pet: Pet) -> None:
+        """Add a pet to this owner's list of pets."""
         self.pets.append(pet)
 
     def set_available_time(self, minutes: int) -> None:
+        """Update the owner's daily time budget in minutes."""
         self.available_minutes = minutes
 
     def get_available_time(self) -> int:
+        """Return the owner's daily time budget in minutes."""
         return self.available_minutes
 
     def get_all_tasks(self) -> List[Task]:
@@ -80,6 +89,7 @@ class ScheduledTask:
     reason: str = ""
 
     def explain(self) -> str:
+        """Return a formatted string showing when and why this task was scheduled."""
         return (
             f"[{self.start_time} - {self.end_time}] {self.task.title} "
             f"({self.task.duration_minutes} min) — {self.reason}"
