@@ -2,6 +2,25 @@
 
 You are building **PawPal+**, a Streamlit app that helps a pet owner plan care tasks for their pet.
 
+## ✨ Features
+
+| Feature | How it works |
+|---|---|
+| **Greedy priority scheduling** | Tasks are sorted `high → medium → low` before placement; the scheduler never backtracks. |
+| **Duration tie-breaking** | Within the same priority level, shorter tasks are scheduled first so more tasks fit the daily budget. |
+| **Hard time budget** | `Scheduler.remaining_minutes` is decremented as each task is placed; any task that would exceed the budget is skipped and reported. |
+| **Chronological sorting** | `sort_by_time()` orders the schedule by integer `start_offset` — exact arithmetic rather than fragile string comparison. |
+| **Multi-level filtering** | Slice tasks by pet, completion status, or category at the `Pet`, `Owner`, or `Scheduler` layer. |
+| **Recurring tasks** | `Task.next_occurrence()` uses `timedelta` to auto-generate the next due date (`daily` +1 day, `weekly` +7 days, `as-needed` → None). Completing a task automatically appends its successor. |
+| **Conflict detection** | `detect_conflicts()` uses `itertools.combinations` to check every unique task pair via `overlaps_with()` — returns warning strings so the app never crashes on overlaps. |
+| **Skipped task report** | Tasks that don't fit the time budget are collected in `Scheduler.skipped` and surfaced in the UI via a collapsible expander. |
+
+## 📸 Demo
+
+<a href="/course_images/ai110/your_screenshot_name.png" target="_blank"><img src='/course_images/ai110/your_screenshot_name.png' title='PawPal App' width='' alt='PawPal App' class='center-block' /></a>
+
+---
+
 ## Scenario
 
 A busy pet owner needs help staying consistent with pet care. They want an assistant that can:
