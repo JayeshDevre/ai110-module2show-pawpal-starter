@@ -4,13 +4,23 @@
 
 **a. Initial design**
 
-- Briefly describe your initial UML design.
-- What classes did you include, and what responsibilities did you assign to each?
+My initial UML included five classes:
+
+- **Task** — holds a single care activity (title, duration, priority, category). Responsible for knowing whether it is high-priority via `is_high_priority()`.
+- **Pet** — represents the animal being cared for (name, species). Owns a list of `Task` objects and exposes `add_task()` / `get_tasks()` so the rest of the system doesn't touch the list directly.
+- **Owner** — represents the person managing care (name, available time budget in minutes, preferences dict). Responsible for tracking and exposing the daily time constraint.
+- **ScheduledTask** — a wrapper around `Task` that adds placement info (start time, reason). Responsible for explaining why and when a task was scheduled via `explain()`.
+- **Scheduler** — the engine. Takes a `Pet` and `Owner`, reads tasks and constraints, and produces an ordered list of `ScheduledTask` objects via `build_schedule()`. Private helpers `_sort_by_priority()` and `_fits_in_time()` handle the two core decisions.
 
 **b. Design changes**
 
-- Did your design change during implementation?
-- If yes, describe at least one change and why you made it.
+After reviewing the skeleton for missing relationships and logic bottlenecks, two changes were made:
+
+1. **Added `end_time` to `ScheduledTask`** — The original design only stored `start_time`. Without `end_time`, the scheduler has no way to detect overlapping tasks or display a proper timeline. `end_time` can be computed as `start_time + task.duration_minutes` and is essential for conflict detection.
+
+2. **Added `remaining_minutes` to `Scheduler`** — The `_fits_in_time()` method existed but had nothing to check against at runtime. Without a mutable counter tracking how much of the owner's time budget has been consumed, the method can never work correctly. `remaining_minutes` is initialized from `owner.available_minutes` and decremented as tasks are scheduled.
+
+One unused import (`Optional`) was also removed to keep the file clean.
 
 ---
 

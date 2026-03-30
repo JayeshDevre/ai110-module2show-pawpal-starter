@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import List, Dict, Optional
+from typing import List, Dict
 
 
 @dataclass
@@ -45,7 +45,8 @@ class Owner:
 @dataclass
 class ScheduledTask:
     task: Task
-    start_time: str  # e.g. "8:00 AM"
+    start_time: str   # e.g. "8:00 AM"
+    end_time: str     # e.g. "8:20 AM" — needed to detect time conflicts
     reason: str = ""
 
     def explain(self) -> str:
@@ -57,6 +58,7 @@ class Scheduler:
         self.pet = pet
         self.owner = owner
         self.schedule: List[ScheduledTask] = []
+        self.remaining_minutes: int = owner.available_minutes  # tracks time budget as tasks are added
 
     def build_schedule(self) -> List[ScheduledTask]:
         pass
