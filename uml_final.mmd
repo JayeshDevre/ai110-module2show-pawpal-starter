@@ -1,0 +1,79 @@
+classDiagram
+
+    class Task {
+        +String title
+        +int duration_minutes
+        +String priority
+        +String category
+        +String frequency
+        +bool completed
+        +date due_date
+        +is_high_priority() bool
+        +is_due_today(already_done_titles) bool
+        +next_occurrence() Task
+        +mark_done() None
+        +__repr__() String
+    }
+
+    class Pet {
+        +String name
+        +String species
+        +List~Task~ tasks
+        +add_task(task) None
+        +get_tasks() List~Task~
+        +get_pending_tasks() List~Task~
+        +complete_task(task) Task
+        +filter_tasks(status, category) List~Task~
+    }
+
+    class Owner {
+        +String name
+        +int available_minutes
+        +Dict preferences
+        +List~Pet~ pets
+        +List~String~ completed_weekly_tasks
+        +add_pet(pet) None
+        +set_available_time(minutes) None
+        +get_available_time() int
+        +get_all_tasks() List~Task~
+        +filter_tasks_by_pet(pet_name) List~Task~
+        +filter_tasks_by_status(status) List~Task~
+    }
+
+    class ScheduledTask {
+        +Task task
+        +int start_offset
+        +int end_offset
+        +String reason
+        +start_time() String
+        +end_time() String
+        +overlaps_with(other) bool
+        +explain() String
+    }
+
+    class Scheduler {
+        +Owner owner
+        +List~ScheduledTask~ schedule
+        +List~Task~ skipped
+        +int remaining_minutes
+        +build_schedule() List~ScheduledTask~
+        +sort_by_time() List~ScheduledTask~
+        +filter_schedule(pet_name, status) List~ScheduledTask~
+        +force_add(task, start_offset) ScheduledTask
+        +detect_conflicts() List~String~
+        +conflict_report() String
+        +summary() String
+        -_get_due_tasks() List~Task~
+        -_sort_by_priority(tasks) List~Task~
+        -_fits_in_time(task) bool
+        -_build_reason(task) String
+    }
+
+    Pet "1" --> "many" Task : owns
+    Owner "1" --> "many" Pet : manages
+    Owner "1" ..> "many" Task : get_all_tasks()
+    Scheduler --> Owner : reads
+    Scheduler "1" --> "many" ScheduledTask : produces
+    Scheduler "1" --> "many" Task : skipped
+    ScheduledTask --> Task : wraps
+    ScheduledTask ..> ScheduledTask : overlaps_with()
