@@ -48,6 +48,34 @@ Calling `Pet.complete_task(task)` marks the task done and automatically appends 
 
 ---
 
+## Testing PawPal+
+
+### Run the test suite
+
+```bash
+python -m pytest tests/test_pawpal.py -v
+```
+
+### What the tests cover
+
+36 tests across 5 areas:
+
+| Area | Tests | What's verified |
+|---|---|---|
+| **Task** | 6 | Completion status, priority flag, recurrence (`daily`/`weekly`/`as-needed`), future `due_date` excluded |
+| **Pet** | 6 | Add/get tasks, pending filter, `complete_task()` auto-recurrence, category + status filtering |
+| **Owner** | 3 | Cross-pet task collection, time budget update, no-pets edge case |
+| **Scheduler — core** | 7 | Priority ordering, time budget enforcement, skipped task tracking, shorter-first tie-breaking, empty schedule edge cases |
+| **Scheduler — advanced** | 14 | `sort_by_time()` chronological order, `filter_schedule()` by pet/status, `detect_conflicts()` overlap detection and false-positive prevention |
+
+### Confidence level
+
+★★★★☆ (4/5)
+
+The core scheduling behaviors (priority ordering, time budget, recurrence, conflict detection) are fully covered by automated tests and all pass. One star is withheld because the `app.py` UI layer has no automated tests — Streamlit interactions would require browser-level testing tools beyond the current scope.
+
+---
+
 ## Getting started
 
 ### Setup
