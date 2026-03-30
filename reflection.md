@@ -28,13 +28,22 @@ One unused import (`Optional`) was also removed to keep the file clean.
 
 **a. Constraints and priorities**
 
-- What constraints does your scheduler consider (for example: time, priority, preferences)?
-- How did you decide which constraints mattered most?
+The scheduler considers two constraints:
+
+1. **Time budget** (`owner.available_minutes`) — no task is added if it would exceed the remaining minutes. This is a hard constraint; the scheduler never overbooks.
+2. **Task priority** (`high → medium → low`) — tasks are sorted before scheduling so high-priority tasks are always placed first. Within the same priority level, shorter tasks go first so more tasks fit within the budget.
+
+`due_date` acts as a third, implicit constraint: tasks with a future `due_date` are excluded from today's schedule entirely, regardless of priority.
+
+Time budget was treated as the most important constraint because exceeding a pet owner's available time makes the plan useless in practice. Priority determines *which* tasks get the limited slots.
 
 **b. Tradeoffs**
 
-- Describe one tradeoff your scheduler makes.
-- Why is that tradeoff reasonable for this scenario?
+The scheduler uses a **greedy algorithm**: it sorts tasks by priority + duration, then adds each task if it fits — never backtracking.
+
+**Tradeoff:** A single large high-priority task (e.g., a 60-minute vet visit) will consume most of the time budget and block several shorter medium- or low-priority tasks that together would have been more useful. The scheduler never asks "what combination of tasks produces the best outcome?" — it just takes the first thing that fits.
+
+**Why it's reasonable here:** For a daily pet care scenario, the tasks are typically short (5–30 min), the number of tasks is small (< 20), and owners generally agree that high-priority tasks *should* run first. A globally optimal knapsack solution would be harder to explain to a user and adds complexity that isn't needed at this scale. The greedy approach is transparent, fast, and predictable.
 
 ---
 

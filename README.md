@@ -22,6 +22,32 @@ Your final app should:
 - Display the plan clearly (and ideally explain the reasoning)
 - Include tests for the most important scheduling behaviors
 
+## Smarter Scheduling
+
+Beyond the basic greedy planner, the system implements four additional features:
+
+### Sorting by time
+`Scheduler.sort_by_time()` returns the schedule ordered chronologically using integer minute offsets as the sort key — exact arithmetic rather than fragile string comparison.
+
+### Filtering
+Tasks can be sliced by pet, category, or completion status at multiple levels:
+- `Pet.filter_tasks(status, category)` — filters one pet's tasks
+- `Owner.filter_tasks_by_pet(name)` / `Owner.filter_tasks_by_status(status)` — cross-pet filters
+- `Scheduler.filter_schedule(pet_name, status)` — filters the live schedule
+
+### Recurring tasks
+`Task.next_occurrence()` uses Python's `timedelta` to calculate the next due date:
+- `daily` → today + 1 day
+- `weekly` → today + 7 days
+- `as-needed` → no recurrence (returns `None`)
+
+Calling `Pet.complete_task(task)` marks the task done and automatically appends the next occurrence to the pet's task list.
+
+### Conflict detection
+`Scheduler.detect_conflicts()` checks every unique pair of scheduled tasks using `itertools.combinations` and `ScheduledTask.overlaps_with()`. It returns a list of warning strings — never raises — so the app continues running even if the schedule has overlaps.
+
+---
+
 ## Getting started
 
 ### Setup
